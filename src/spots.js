@@ -132,7 +132,7 @@ export const SPOTS = [
     lat: -34.1897, lon: 18.4322,
     hasMarine: true, isTidal: false,
     exposure: 'sheltered',
-    profile: 'Sheltered False Bay beach near Simon's Town. Protected from SW swell. Calm, clear water. White shark area — check SharkSpotter status.',
+    profile: 'Sheltered False Bay beach near Simons Town. Protected from SW swell. Calm, clear water. White shark area — check SharkSpotter status.',
   },
 
   // ── SOUTH COAST ───────────────────────────────────────────────────────────
