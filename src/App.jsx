@@ -175,7 +175,8 @@ export default function App() {
   const w = r?.weather;
   const m = r?.marine;
 
-  const readParas = r?.readText?.split(/\n\n+/).filter(p => p.trim()) || [];
+  const cleanRead = (r?.readText || "").replace(/^#+\s+.*$/gm,"").replace(/\*\*(.+?)\*\*/g,"$1").replace(/\*(.+?)\*/g,"$1").trim();
+  const readParas = cleanRead.split(/\n\n+/).filter(p => p.trim());
   const bodyParas = readParas.length > 1 ? readParas.slice(0, -1) : readParas;
   const caveat = readParas.length > 1 ? readParas[readParas.length - 1] : '';
 
