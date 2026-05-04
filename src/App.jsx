@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { SPOTS, matchSpot, quickSpots } from './spots';
 import { fetchConditions } from './api';
-import { getTidalState } from './tides';
+
 
 const NAVY = '#1B2535';
 const AMBER = '#E09040';
@@ -354,4 +354,36 @@ export default function App() {
       </div>
     </div>
   );
+}
+
+const _SEMI_MS = 12 * 3600000 + 25 * 60000 + 14000;
+const _HW_EPOCHS = {
+  'knysna-heads':  Date.UTC(2026, 4, 4, 3, 11, 0),
+  'knysna-lagoon': Date.UTC(2026, 4, 4, 3, 25, 0),
+};
+function getTidalState(date, spot) {
+  if (!spot?.isTidal) return null;
+  const epoch = _HW_EPOCHS[spot.id];
+  if (!epoch) return null;
+  const nowMs = date.getTime();
+  let hw = epoch;
+  while (hw + _SEMI_MS <= nowMs) hw += _SEMI_MS;
+  while (hw > nowMs) hw -= _SEMI_MS;
+  const angle = ((nowMs - hw) / _SEMI_MS) * 2 * Math.PI;
+  const rate = -Math.sin(angle);
+  const isSlack = Math.abs(rate) < 0.2;
+  const direction = rate >= 0 ? 'incoming' : 'outgoing';
+  let hoursToTurn = rate >= 0
+    ? ((2 * Math.PI - angle) / (2 * Math.PI)) * _SEMI_MS / 3600000
+    : ((Math.PI - angle) / (2 * Math.PI)) * _SEMI_MS / 3600000;
+  hoursToTurn = Math.max(0.1, Math.round(hoursToTurn * 10) / 10);
+  const LUNAR_CYCLE = 29.53 * 24 * 3600000;
+  const phase = ((nowMs - Date.UTC(2000, 0, 6, 18, 14, 0)) % LUNAR_CYCLE) / LUNAR_CYCLE;
+  const distSpring = Math.min(Math.min(phase, 1 - phase), Math.abs(phase - 0.5));
+  const range = distSpring < 0.085 ? 'spring' : distSpring > 0.165 ? 'neap' : 'moderate';
+  const rangeLabel = { spring: 'Spring tide — stronger current', neap: 'Neap tide — gentler current', moderate: 'Moderate tidal range' }[range];
+  const isLagoon = spot.id.includes('lagoon');
+  const dirLabel = isLagoon ? (direction === 'incoming' ? 'flowing into the lagoon' : 'flowing toward the Heads') : direction;
+  const note = isSlack ? `Near slack water — tide turning in under ${Math.ceil(hoursToTurn * 60)} min. ${rangeLabel}.` : `${rangeLabel}. Tide ${dirLabel}, turning in ~${hoursToTurn}h.`;
+  return { direction, isSlack, hoursToTurn, range, note };
 }
