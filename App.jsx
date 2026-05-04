@@ -126,7 +126,7 @@ async function getRead(locationName, weather, marine, waterTemp, tidal, spot) {
     ' on ' + now.toLocaleDateString('en-GB', {weekday: 'long'});
 
   const prompt = `You are the conditions reader for Glassy, an open water swim app.
-Location: ${locationName}
+Swim spot type: ${spot ? spot.exposure + " — " + spot.region : "open coast"}
 Time: ${timeLabel}
 ${spot?.profile ? `Spot profile: ${spot.profile}` : ''}
 
