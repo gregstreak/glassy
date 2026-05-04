@@ -415,9 +415,9 @@ export const SPOTS = [
   },
   {
     id: 'durban-beach-club',
-    name: 'Durban Beach Club',
+    name: 'Durban Under-Water Club (DUC)',
     region: 'KwaZulu-Natal',
-    aliases: ['durban beach club', 'duc', 'durban beach'],
+    aliases: ['duc', 'durban under-water club', 'durban underwater club', 'durban beach club', 'durban beach'],
     lat: -29.8654, lon: 31.0514,
     hasMarine: true, isTidal: false,
     exposure: 'open ocean',
