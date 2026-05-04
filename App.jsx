@@ -103,7 +103,7 @@ Current conditions:
 - Wind: ${f0(weather.windSpeed)} km/h from ${weather.windDirection}
 - Rain probability: ${weather.rainProb != null ? weather.rainProb + '%' : 'unavailable'}
 ${marine ? `- Wave height: ${f1(marine.waveHeight)}m, period ${f0(marine.wavePeriod)}s from ${marine.waveDirection}\n- Swell: ${f1(marine.swellHeight)}m at ${f0(marine.swellPeriod)}s from ${marine.swellDirection}` : '- No ocean swell (sheltered location)'}
-Write a plain-language conditions read for an experienced open water swimmer.
+Write a plain-language conditions read for an experienced open water swimmer. The numbers above are verified sensor data — translate them accurately. Do not substitute or improve on the figures provided. If the period is 5 seconds, say it is short-period chop, not a longer period.
 Paragraph 1: current conditions in swimmer language. Note chop vs groundswell. Factor in tidal and spot context.
 Paragraph 2: trajectory — is this the window or is it closing?
 Blank line then a single caveat sentence. Human tone.
