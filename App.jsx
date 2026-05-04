@@ -93,22 +93,55 @@ const TidalBadge = ({ tidal }) => {
 
 // ── API call ──────────────────────────────────────────────────────────────
 async function getRead(locationName, weather, marine, waterTemp, tidal, spot) {
-  const tc = tidal ? `Tidal state: ${tidal.direction}, ${tidal.range} tide, ${tidal.isSlack ? 'near slack water' : `turning in ~${tidal.hoursToTurn}h`}.` : '';
+  // Translate numbers to labels in JavaScript — do not let the LLM near raw period figures
+  const windLabel = weather.windSpeed == null ? 'calm' :
+    weather.windSpeed < 10 ? `light (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
+    weather.windSpeed < 20 ? `moderate (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
+    weather.windSpeed < 35 ? `fresh (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
+    `strong (${f0(weather.windSpeed)} km/h from ${weather.windDirection})`;
+
+  let swellLabel = 'no ocean swell';
+  if (marine) {
+    const sp = marine.swellPeriod;
+    const sh = marine.swellHeight;
+    const periodLabel = sp == null ? '' :
+      sp < 7 ? `${f0(sp)}-second period (short — wind chop, not groundswell)` :
+      sp < 10 ? `${f0(sp)}-second period (moderate swell)` :
+      `${f0(sp)}-second period (long — proper groundswell)`;
+    const heightLabel = sh == null ? 'unknown size' :
+      sh < 0.5 ? 'negligible' :
+      sh < 1.0 ? 'small' :
+      sh < 1.5 ? 'moderate' :
+      sh < 2.5 ? 'sizeable' : 'large';
+    swellLabel = `${heightLabel} ${f1(sh)}m swell from ${marine.swellDirection}, ${periodLabel}`;
+  }
+
+  const tidalLabel = tidal ?
+    `${tidal.range} tide, ${tidal.direction}${tidal.isSlack ? ', near slack water' : `, turning in ~${tidal.hoursToTurn}h`}` : '';
+
+  const tempLabel = waterTemp != null ? `${f1(waterTemp)}C water` : '';
+  const airLabel = weather.airTemp != null ? `${f1(weather.airTemp)}C air` : '';
+  const now = new Date();
+  const timeLabel = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) +
+    ' on ' + now.toLocaleDateString('en-GB', {weekday: 'long'});
+
   const prompt = `You are the conditions reader for Glassy, an open water swim app.
 Location: ${locationName}
+Time: ${timeLabel}
 ${spot?.profile ? `Spot profile: ${spot.profile}` : ''}
-${tc}
-Current conditions:
-- Air temp: ${f1(weather.airTemp)}C, Water temp: ${waterTemp != null ? f1(waterTemp) + 'C' : 'unavailable'}
-- Wind: ${f0(weather.windSpeed)} km/h from ${weather.windDirection}
-- Rain probability: ${weather.rainProb != null ? weather.rainProb + '%' : 'unavailable'}
-${marine ? `- Wave height: ${f1(marine.waveHeight)}m
-- Swell period: ${marine.swellPeriod != null ? (marine.swellPeriod < 7 ? f0(marine.swellPeriod) + "s — this is short-period wind chop, NOT groundswell" : marine.swellPeriod < 10 ? f0(marine.swellPeriod) + "s — moderate period swell" : f0(marine.swellPeriod) + "s — long-period groundswell") : "unknown"}\n- Swell: ${f1(marine.swellHeight)}m from ${marine.swellDirection}, period is ${marine.swellPeriod != null && marine.swellPeriod < 8 ? "short and choppy" : "long and organised"}` : '- No ocean swell (sheltered location)'}
-Write a plain-language conditions read for an experienced open water swimmer. The numbers above are verified sensor data — translate them accurately. Do not substitute or improve on the figures provided. If the period is 5 seconds, say it is short-period chop, not a longer period.
-START your first sentence with exactly this: "The swell is running at ${f1(marine ? marine.swellHeight : null)}m on a ${marine && marine.swellPeriod != null && marine.swellPeriod < 8 ? "short " + f0(marine.swellPeriod) + "-second period — wind-driven chop" : marine ? f0(marine.swellPeriod) + "-second period" : "flat"}" — then continue the read from there using only the data provided.
+
+Pre-translated conditions (do not change these descriptions):
+- Swell: ${swellLabel}
+- Wind: ${windLabel}
+${tidalLabel ? `- Tidal: ${tidalLabel}` : ''}
+${tempLabel ? `- ${tempLabel}, ${airLabel}` : ''}
+${weather.rainProb != null && weather.rainProb > 20 ? `- Rain: ${weather.rainProb}% probability` : ''}
+
+Write 2 short paragraphs for an experienced open water swimmer.
+Paragraph 1: what the conditions feel like right now. Use the pre-translated descriptions above — do not invent or change any figures or period labels.
 Paragraph 2: trajectory — is this the window or is it closing?
-Blank line then a single caveat sentence. Human tone.
-Rules: no markdown, no asterisks, no headers, no bullets. Never say safe or unsafe. Under 130 words. IMPORTANT: use the actual time of day provided — do not say morning if it is afternoon or evening.`;
+Then one short caveat sentence. Human tone, not legal.
+No markdown. No headers. No bullets. Never say safe or unsafe. Under 120 words total.`;
 
   const res = await fetch('https://glassy-lake.vercel.app/api/read', {
     method: 'POST',
@@ -197,7 +230,7 @@ export default function App() {
               placeholder="Search any location…"
               disabled={phase === 'loading'}
               autoComplete="off"
-              style={{ flex: 1, background: SURFACE, border: '1px solid #2A3A54', borderRadius: 8, color: TEXT, fontSize: 16, padding: '11px 14px', outline: 'none', fontFamily: 'inherit', opacity: phase === 'loading' ? 0.6 : 1 }}
+              style={{ flex: 1, background: SURFACE, border: '1px solid #2A3A54', borderRadius: 8, color: TEXT, fontSize: 14, padding: '11px 14px', outline: 'none', fontFamily: 'inherit', opacity: phase === 'loading' ? 0.6 : 1 }}
             />
             <button
               onClick={() => search()}
