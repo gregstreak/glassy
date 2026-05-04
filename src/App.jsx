@@ -68,7 +68,7 @@ async function getRead(locationName, weather, marine, waterTemp, tidal, spot) {
     ? `Tidal state: ${tidal.direction}, ${tidal.range} tide, ${tidal.isSlack ? 'near slack water' : `turning in ~${tidal.hoursToTurn}h`}.`
     : '';
 
-  const prompt = `You are the conditions reader for Glassy, an open water swim app.
+  const prompt = `You are the conditions reader for Glassy, an open water swim app. The current local time is ${new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} on ${new Date().toLocaleDateString('en-GB', {weekday: 'long'})}.
 
 Location: ${locationName}
 ${spot?.profile ? `Spot profile: ${spot.profile}` : ''}
