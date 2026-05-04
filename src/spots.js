@@ -124,6 +124,17 @@ export const SPOTS = [
     profile: 'Open coast between the Bushmans and Kariega river mouths. Exposed to S swell. River mouth rips possible after rain.',
   },
 
+  {
+    id: 'simons-town-long-beach',
+    name: "Simon's Town Long Beach",
+    region: 'False Bay',
+    aliases: ["simons town long beach", "long beach simons town", "simon's town beach", "simons town"],
+    lat: -34.1897, lon: 18.4322,
+    hasMarine: true, isTidal: false,
+    exposure: 'sheltered',
+    profile: 'Sheltered False Bay beach near Simon's Town. Protected from SW swell. Calm, clear water. White shark area — check SharkSpotter status.',
+  },
+
   // ── SOUTH COAST ───────────────────────────────────────────────────────────
   {
     id: 'hermanus',
