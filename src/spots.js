@@ -295,7 +295,7 @@ export const SPOTS = [
     id: 'big-bay',
     name: 'Big Bay',
     region: 'West Coast',
-    aliases: ['big bay', 'bigbay', 'blouberg big bay'],
+    aliases: ['big bay', 'bigbay'],
     lat: -33.8000, lon: 18.4833,
     hasMarine: true, isTidal: false,
     exposure: 'open ocean',
