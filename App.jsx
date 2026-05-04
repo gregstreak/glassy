@@ -1,7 +1,64 @@
 import { useState } from 'react';
 import { SPOTS, matchSpot, quickSpots } from './spots';
 import { fetchConditions } from './api';
-import { getTidalState } from './tides';
+
+// ── Tidal state — epoch-anchored, verified against SA tide tables ──────────
+// Verified HW at Knysna: 2026-05-04 05:11 SAST = 03:11 UTC
+// Mean semidiurnal period: 12h 25m 14s
+const _SEMI_MS = 12 * 3600000 + 25 * 60000 + 14000;
+const _HW_EPOCHS = {
+  'knysna-heads':  Date.UTC(2026, 4, 4, 3, 11, 0),
+  'knysna-lagoon': Date.UTC(2026, 4, 4, 3, 25, 0),
+  'hermanus':      Date.UTC(2026, 4, 4, 2, 30, 0),
+  'gordons-bay':   Date.UTC(2026, 4, 4, 4,  0, 0),
+  'fish-hoek':     Date.UTC(2026, 4, 4, 3, 45, 0),
+};
+
+function getTidalState(date, spot) {
+  if (!spot?.isTidal) return null;
+  const epoch = _HW_EPOCHS[spot.id];
+  if (!epoch) return null;
+
+  const nowMs = date.getTime();
+  // Find the most recent HW before now
+  let hw = epoch;
+  while (hw + _SEMI_MS <= nowMs) hw += _SEMI_MS;
+  while (hw > nowMs) hw -= _SEMI_MS;
+
+  const timeSinceHW = nowMs - hw;
+  const angle = (timeSinceHW / _SEMI_MS) * 2 * Math.PI;
+  const rate = -Math.sin(angle); // +ve = incoming, -ve = outgoing
+
+  const isSlack = Math.abs(rate) < 0.2;
+  const direction = rate >= 0 ? 'incoming' : 'outgoing';
+
+  let hoursToTurn;
+  if (rate >= 0) {
+    hoursToTurn = ((2 * Math.PI - angle) / (2 * Math.PI)) * _SEMI_MS / 3600000;
+  } else {
+    hoursToTurn = ((Math.PI - angle) / (2 * Math.PI)) * _SEMI_MS / 3600000;
+  }
+  hoursToTurn = Math.max(0.1, Math.round(hoursToTurn * 10) / 10);
+
+  // Moon phase for spring/neap
+  const LUNAR_CYCLE = 29.53 * 24 * 3600000;
+  const NEW_MOON_REF = Date.UTC(2000, 0, 6, 18, 14, 0);
+  const phase = ((nowMs - NEW_MOON_REF) % LUNAR_CYCLE) / LUNAR_CYCLE;
+  const distSpring = Math.min(Math.min(phase, 1 - phase), Math.abs(phase - 0.5));
+  const range = distSpring < 0.085 ? 'spring' : distSpring > 0.165 ? 'neap' : 'moderate';
+
+  const rangeLabel = { spring: 'Spring tide — stronger current', neap: 'Neap tide — gentler current', moderate: 'Moderate tidal range' }[range];
+  const isLagoon = spot.id.includes('lagoon');
+  const dirLabel = isLagoon
+    ? (direction === 'incoming' ? 'flowing into the lagoon' : 'flowing toward the Heads')
+    : direction;
+
+  const note = isSlack
+    ? `Near slack water — tide turning in under ${Math.ceil(hoursToTurn * 60)} min. ${rangeLabel}.`
+    : `${rangeLabel}. Tide ${dirLabel}, turning in ~${hoursToTurn}h.`;
+
+  return { direction, isSlack, hoursToTurn, range, note };
+}
 
 const NAVY = '#1B2535';
 const AMBER = '#E09040';
@@ -181,7 +238,13 @@ export default function App() {
   const w = r?.weather;
   const m = r?.marine;
 
-  const readParas = r?.readText?.split(/\n\n+/).filter(p => p.trim()) || [];
+  const cleanRead = (r?.readText || '')
+    .replace(/^#+\s+.*$/gm, '')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/^[-*]\s+/gm, '')
+    .trim();
+  const readParas = cleanRead.split(/\n\n+/).filter(p => p.trim());
   const bodyParas = readParas.length > 1 ? readParas.slice(0, -1) : readParas;
   const caveat = readParas.length > 1 ? readParas[readParas.length - 1] : '';
 
