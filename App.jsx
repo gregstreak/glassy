@@ -104,7 +104,7 @@ Current conditions:
 - Rain probability: ${weather.rainProb != null ? weather.rainProb + '%' : 'unavailable'}
 ${marine ? `- Wave height: ${f1(marine.waveHeight)}m, period ${f0(marine.wavePeriod)}s from ${marine.waveDirection}\n- Swell: ${f1(marine.swellHeight)}m at ${f0(marine.swellPeriod)}s from ${marine.swellDirection}` : '- No ocean swell (sheltered location)'}
 Write a plain-language conditions read for an experienced open water swimmer. The numbers above are verified sensor data — translate them accurately. Do not substitute or improve on the figures provided. If the period is 5 seconds, say it is short-period chop, not a longer period.
-Paragraph 1: current conditions in swimmer language. Note chop vs groundswell. Factor in tidal and spot context.
+Paragraph 1: current conditions in swimmer language. Use ONLY the exact numbers provided above — do not change or improve them. A 5-second period means short choppy swell, say so. A 1-metre swell is small, say so. Factor in tidal and spot context.
 Paragraph 2: trajectory — is this the window or is it closing?
 Blank line then a single caveat sentence. Human tone.
 Rules: no markdown, no asterisks, no headers, no bullets. Never say safe or unsafe. Under 130 words. IMPORTANT: use the actual time of day provided — do not say morning if it is afternoon or evening.`;
