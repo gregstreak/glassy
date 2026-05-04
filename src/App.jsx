@@ -96,7 +96,7 @@ One line break then a single caveat sentence: forecast data as reference not aut
 
 Rules: never say safe or unsafe. No verdict. No headers or bullets. Under 130 words total.`;
 
-  const res = await fetch('/api/read', {
+  const res = await fetch('https://glassy-lake.vercel.app/api/read', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt }),
