@@ -124,17 +124,6 @@ export const SPOTS = [
     profile: 'Open coast between the Bushmans and Kariega river mouths. Exposed to S swell. River mouth rips possible after rain.',
   },
 
-  {
-    id: 'simons-town-long-beach',
-    name: "Simon's Town Long Beach",
-    region: 'False Bay',
-    aliases: ["simons town long beach", "long beach simons town", "simon's town beach", "simons town"],
-    lat: -34.1897, lon: 18.4322,
-    hasMarine: true, isTidal: false,
-    exposure: 'sheltered',
-    profile: 'Sheltered False Bay beach near Simons Town. Protected from SW swell. Calm, clear water. White shark area — check SharkSpotter status.',
-  },
-
   // ── SOUTH COAST ───────────────────────────────────────────────────────────
   {
     id: 'hermanus',
@@ -306,7 +295,7 @@ export const SPOTS = [
     id: 'big-bay',
     name: 'Big Bay',
     region: 'West Coast',
-    aliases: ['big bay', 'bigbay'],
+    aliases: ['big bay', 'bigbay', 'blouberg big bay'],
     lat: -33.8000, lon: 18.4833,
     hasMarine: true, isTidal: false,
     exposure: 'open ocean',
@@ -495,6 +484,136 @@ export const SPOTS = [
     hasMarine: true, isTidal: false,
     exposure: 'semi-sheltered',
     profile: 'Sheltered lagoon bay. Cold Benguela water. Flamingo habitat. Calmer than open Swakopmund beach.',
+  },
+
+  // ── FALSE BAY ADDITIONS ───────────────────────────────────────────────────
+  {
+    id: 'simons-town-long-beach',
+    name: "Simons Town Long Beach",
+    region: 'False Bay',
+    aliases: ['simons town long beach', 'long beach simons town', 'simons town beach', 'simons town'],
+    lat: -34.1897, lon: 18.4322,
+    hasMarine: true, isTidal: false,
+    exposure: 'sheltered',
+    profile: 'Sheltered False Bay beach near Simons Town. Protected from SW swell. Calm clear water. White shark area — check SharkSpotter status.',
+  },
+  {
+    id: 'millers-point',
+    name: "Millers Point",
+    region: 'False Bay',
+    aliases: ['millers point', 'miller point'],
+    lat: -34.2167, lon: 18.4500,
+    hasMarine: true, isTidal: false,
+    exposure: 'sheltered',
+    profile: 'Rocky False Bay cove south of Simons Town. Sheltered from SW swell. Clear cold water. Popular shore dive and swim spot.',
+  },
+  {
+    id: 'seaforth-beach',
+    name: 'Seaforth Beach',
+    region: 'False Bay',
+    aliases: ['seaforth', 'seaforth beach'],
+    lat: -34.1950, lon: 18.4380,
+    hasMarine: true, isTidal: false,
+    exposure: 'sheltered',
+    profile: 'Sheltered False Bay beach adjacent to Boulders. Calm water. Penguin colony nearby. White shark area.',
+  },
+
+  // ── GARDEN ROUTE ADDITIONS ────────────────────────────────────────────────
+  {
+    id: 'victoria-bay',
+    name: 'Victoria Bay',
+    region: 'Garden Route',
+    aliases: ['victoria bay', 'vic bay'],
+    lat: -33.9833, lon: 22.5333,
+    hasMarine: true, isTidal: false,
+    exposure: 'open ocean',
+    profile: 'Small exposed cove between George and Wilderness. Full S and SW swell exposure. Shallow reef break. Primarily a surf spot — check conditions carefully before swimming.',
+  },
+  {
+    id: 'keurboomstrand',
+    name: 'Keurboomstrand',
+    region: 'Garden Route',
+    aliases: ['keurboomstrand', 'keurboom'],
+    lat: -34.0167, lon: 23.4333,
+    hasMarine: true, isTidal: false,
+    exposure: 'open ocean',
+    profile: 'Open beach east of Plett. Exposed to S and SW swell. Keurbooms river mouth nearby — avoid after heavy rain.',
+  },
+  {
+    id: 'natures-valley',
+    name: "Natures Valley",
+    region: 'Garden Route',
+    aliases: ['natures valley', 'nature valley'],
+    lat: -33.9833, lon: 23.5500,
+    hasMarine: true, isTidal: false,
+    exposure: 'semi-sheltered',
+    profile: 'Remote lagoon and beach within the Tsitsikamma. Sheltered lagoon for calm swims; the beach is exposed open ocean. Pristine and uncrowded.',
+  },
+
+  // ── EASTERN CAPE ADDITIONS ────────────────────────────────────────────────
+  {
+    id: 'gqeberha',
+    name: 'Gqeberha (Port Elizabeth)',
+    region: 'Eastern Cape',
+    aliases: ['gqeberha', 'port elizabeth', 'pe beach', 'humewood', 'hobie beach'],
+    lat: -33.9900, lon: 25.6500,
+    hasMarine: true, isTidal: false,
+    exposure: 'semi-sheltered',
+    profile: 'Algoa Bay beaches — Hobie, Humewood, Kings. Semi-sheltered bay. Warm Agulhas water. Popular open water swim venue.',
+  },
+  {
+    id: 'east-london',
+    name: 'East London',
+    region: 'Eastern Cape',
+    aliases: ['east london', 'eastern beach east london', 'nahoon beach'],
+    lat: -33.0167, lon: 27.9167,
+    hasMarine: true, isTidal: false,
+    exposure: 'open ocean',
+    profile: 'Nahoon and Eastern Beach. Open Indian Ocean exposure. Warm water. Shark nets at main beaches — check status.',
+  },
+
+  // ── KZN ADDITIONS ─────────────────────────────────────────────────────────
+  {
+    id: 'north-beach-durban',
+    name: 'North Beach Durban',
+    region: 'KwaZulu-Natal',
+    aliases: ['north beach', 'north beach durban', 'ushaka beach'],
+    lat: -29.8500, lon: 31.0500,
+    hasMarine: true, isTidal: false,
+    exposure: 'open ocean',
+    profile: 'Main Durban beachfront. Warm Indian Ocean. Shark nets. Busy beach with lifeguards. Popular open water swim stretch.',
+  },
+  {
+    id: 'amanzimtoti',
+    name: 'Amanzimtoti',
+    region: 'KwaZulu-Natal',
+    aliases: ['amanzimtoti', 'toti', 'inyoni rocks'],
+    lat: -30.0500, lon: 30.8833,
+    hasMarine: true, isTidal: false,
+    exposure: 'open ocean',
+    profile: 'KZN south coast beach. Warm Indian Ocean. Shark nets at main beaches. Check flag status before entering.',
+  },
+
+  // ── WEST COAST ADDITIONS ──────────────────────────────────────────────────
+  {
+    id: 'paternoster',
+    name: 'Paternoster',
+    region: 'West Coast',
+    aliases: ['paternoster', 'paternoster beach'],
+    lat: -32.8167, lon: 17.8833,
+    hasMarine: true, isTidal: false,
+    exposure: 'semi-sheltered',
+    profile: 'Small bay on the West Coast. Some shelter from prevailing SW swell. Cold Benguela water. Remote — plan accordingly.',
+  },
+  {
+    id: 'langebaan',
+    name: 'Langebaan Lagoon',
+    region: 'West Coast',
+    aliases: ['langebaan', 'langebaan lagoon', 'club mykonos'],
+    lat: -33.1000, lon: 18.0333,
+    hasMarine: false, isTidal: false,
+    exposure: 'sheltered',
+    profile: 'Sheltered West Coast lagoon in the West Coast National Park. Flat calm water. Warm in summer. No sharks. Popular triathlon and open water venue.',
   },
 ];
 
