@@ -102,7 +102,8 @@ Current conditions:
 - Air temp: ${f1(weather.airTemp)}C, Water temp: ${waterTemp != null ? f1(waterTemp) + 'C' : 'unavailable'}
 - Wind: ${f0(weather.windSpeed)} km/h from ${weather.windDirection}
 - Rain probability: ${weather.rainProb != null ? weather.rainProb + '%' : 'unavailable'}
-${marine ? `- Wave height: ${f1(marine.waveHeight)}m\n- Swell: ${f1(marine.swellHeight)}m at ${f0(marine.swellPeriod)}s (${marine.swellPeriod != null && marine.swellPeriod < 8 ? "short-period wind chop" : "longer-period groundswell"}) from ${marine.swellDirection}` : '- No ocean swell (sheltered location)'}
+${marine ? `- Wave height: ${f1(marine.waveHeight)}m
+- SWELL PERIOD IS EXACTLY ${f0(marine.swellPeriod)} SECONDS — do not use any other period figure\n- Swell: ${f1(marine.swellHeight)}m at ${f0(marine.swellPeriod)}s (${marine.swellPeriod != null && marine.swellPeriod < 8 ? "short-period wind chop" : "longer-period groundswell"}) from ${marine.swellDirection}` : '- No ocean swell (sheltered location)'}
 Write a plain-language conditions read for an experienced open water swimmer. The numbers above are verified sensor data — translate them accurately. Do not substitute or improve on the figures provided. If the period is 5 seconds, say it is short-period chop, not a longer period.
 Paragraph 1: current conditions in swimmer language. Use ONLY the exact numbers provided above — do not change or improve them. A 5-second period means short choppy swell, say so. A 1-metre swell is small, say so. Factor in tidal and spot context.
 Paragraph 2: trajectory — is this the window or is it closing?
