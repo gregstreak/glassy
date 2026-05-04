@@ -196,7 +196,7 @@ export default function App() {
               placeholder="Search any location…"
               disabled={phase === 'loading'}
               autoComplete="off"
-              style={{ flex: 1, background: SURFACE, border: '1px solid #2A3A54', borderRadius: 8, color: TEXT, fontSize: 14, padding: '11px 14px', outline: 'none', fontFamily: 'inherit', opacity: phase === 'loading' ? 0.6 : 1 }}
+              style={{ flex: 1, background: SURFACE, border: '1px solid #2A3A54', borderRadius: 8, color: TEXT, fontSize: 16, padding: '11px 14px', outline: 'none', fontFamily: 'inherit', opacity: phase === 'loading' ? 0.6 : 1 }}
             />
             <button
               onClick={() => search()}
