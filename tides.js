@@ -15,86 +15,62 @@ export function getTidalRange(date = new Date()) {
   return 'moderate';
 }
 
-// Find the most recent moon upper transit by scanning one full lunar day back
-// plus 6h forward, then refining to 1-minute precision
-function findLastTransit(date, lat, lon) {
-  const LUNAR_DAY_MS = 24 * 60 * 60 * 1000 + 50 * 60 * 1000;
-  const STEP_MS = 10 * 60 * 1000;
-  const now = date.getTime();
+// Tidal calculation anchored to a known verified HW epoch for each spot.
+// We use a real observed HW time and step forward/backward by the mean
+// semidiurnal period to find the HW nearest to the query time.
+//
+// Known HW epoch (verified against SA tide tables / Tides app):
+// Knysna: HW at 2026-05-04 05:11 SAST = 2026-05-04T03:11:00Z
+//
+// Mean semidiurnal period for Knysna: 12h 25m 14s (745.23 min)
+// This is the mean M2 tidal period.
 
-  // Coarse scan: full lunar day back + 6h forward
-  let maxAlt = -Infinity;
-  let peakTime = now;
-  for (let offset = -LUNAR_DAY_MS; offset <= 6 * 3600000; offset += STEP_MS) {
-    const pos = SunCalc.getMoonPosition(new Date(now + offset), lat, lon);
-    if (pos.altitude > maxAlt) {
-      maxAlt = pos.altitude;
-      peakTime = now + offset;
-    }
-  }
+const SEMIDIURNAL_MS = 12 * 3600000 + 25 * 60000 + 14000; // 12h 25m 14s
 
-  // Fine scan: ±15 min around peak, 1-minute steps
-  maxAlt = -Infinity;
-  let transitTime = peakTime;
-  for (let offset = -15 * 60000; offset <= 15 * 60000; offset += 60000) {
-    const pos = SunCalc.getMoonPosition(new Date(peakTime + offset), lat, lon);
-    if (pos.altitude > maxAlt) {
-      maxAlt = pos.altitude;
-      transitTime = peakTime + offset;
-    }
-  }
+// Epoch HW times in UTC milliseconds (verified observed high waters)
+const HW_EPOCHS = {
+  'knysna-heads':  Date.UTC(2026, 4, 4, 3, 11, 0),  // 2026-05-04 05:11 SAST = 03:11 UTC
+  'knysna-lagoon': Date.UTC(2026, 4, 4, 3, 25, 0),  // ~15 min lag into lagoon
+  'hermanus':      Date.UTC(2026, 4, 4, 2, 30, 0),  // approximate
+  'gordons-bay':   Date.UTC(2026, 4, 4, 4, 0, 0),   // approximate
+  'fish-hoek':     Date.UTC(2026, 4, 4, 3, 45, 0),  // approximate
+};
 
-  return transitTime;
+function findNearestHW(epochMs, nowMs) {
+  // Step from epoch to find the HW closest to, but before, now
+  let hw = epochMs;
+  // Step forward to catch up to now
+  while (hw + SEMIDIURNAL_MS <= nowMs) hw += SEMIDIURNAL_MS;
+  // Step back to ensure hw is the last HW before now
+  while (hw > nowMs) hw -= SEMIDIURNAL_MS;
+  return hw;
 }
 
 export function getTidalState(date = new Date(), spot = null) {
   if (!spot?.isTidal) return null;
 
-  const SEMIDIURNAL_PERIOD_MS = 12 * 60 * 60 * 1000 + 25 * 60 * 1000; // 12h 25m
+  const epoch = HW_EPOCHS[spot.id];
+  if (!epoch) return null;
 
-  // Mean High Water Lunitidal Interval (MHWI) for each spot
-  // = time from moon's upper transit to next high water
-  // Calibrated from SA Navy tide tables and observed data:
-  // Knysna: HW at 05:11 & 17:36 on 4 May 2026, moon transit ~03:10 SAST → MHWI ≈ 2h 00m
-  const HW_OFFSET_MS = {
-    'knysna-heads':  2 * 3600000,                    // 2h 00m
-    'knysna-lagoon': 2 * 3600000 + 15 * 60000,       // 2h 15m (tidal lag into estuary)
-    'hermanus':      1 * 3600000 + 30 * 60000,        // 1h 30m
-    'gordons-bay':   2 * 3600000 + 45 * 60000,        // 2h 45m
-    'fish-hoek':     2 * 3600000 + 30 * 60000,        // 2h 30m
-    'default':       3 * 3600000,                     // 3h fallback
-  };
-
-  const hwOffset = HW_OFFSET_MS[spot.id] || HW_OFFSET_MS['default'];
-  const transitTime = findLastTransit(date, spot.lat, spot.lon);
-  const now = date.getTime();
-
-  // First candidate HW = transit + offset
-  let hwTime = transitTime + hwOffset;
-
-  // Step to find the most recent HW before now
-  while (hwTime > now) hwTime -= SEMIDIURNAL_PERIOD_MS;
-  while (hwTime + SEMIDIURNAL_PERIOD_MS <= now) hwTime += SEMIDIURNAL_PERIOD_MS;
-  // hwTime is now the last HW before 'now'
-
-  const timeSinceHW = now - hwTime;
-  const fractionOfCycle = timeSinceHW / SEMIDIURNAL_PERIOD_MS;
+  const nowMs = date.getTime();
+  const lastHW = findNearestHW(epoch, nowMs);
+  const timeSinceHW = nowMs - lastHW;
+  const fractionOfCycle = timeSinceHW / SEMIDIURNAL_MS;
   const tidalAngle = fractionOfCycle * 2 * Math.PI;
 
-  // cos(tidalAngle): 1 = HW, -1 = LW
+  // cos: 1 = HW, -1 = LW
   const tidalHeight = Math.cos(tidalAngle);
   // -sin: positive = rising (incoming), negative = falling (outgoing)
   const tidalRate = -Math.sin(tidalAngle);
 
-  // Time remaining to next turn
   let hoursToTurn;
   if (tidalRate >= 0) {
     // Rising — time to next HW
-    const remaining = (2 * Math.PI - tidalAngle) / (2 * Math.PI) * SEMIDIURNAL_PERIOD_MS;
+    const remaining = (2 * Math.PI - tidalAngle) / (2 * Math.PI) * SEMIDIURNAL_MS;
     hoursToTurn = remaining / 3600000;
   } else {
     // Falling — time to next LW
-    const remaining = (Math.PI - tidalAngle) / (2 * Math.PI) * SEMIDIURNAL_PERIOD_MS;
+    const remaining = (Math.PI - tidalAngle) / (2 * Math.PI) * SEMIDIURNAL_MS;
     hoursToTurn = remaining / 3600000;
   }
 
@@ -127,7 +103,6 @@ function buildTidalNote(spot, direction, isSlack, range, hoursToTurn) {
   }
 
   const h = Math.round(hoursToTurn * 10) / 10;
-
   const dirLabel = spot.id.includes('lagoon')
     ? direction === 'incoming' ? 'flowing into the lagoon' : 'flowing toward the Heads'
     : direction === 'incoming' ? 'incoming' : 'outgoing';

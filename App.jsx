@@ -94,7 +94,7 @@ Paragraph 2 (1-2 sentences): Trajectory — is this the window or is it closing?
 
 One line break then a single caveat sentence: forecast data as reference not authority. Human tone, not legal.
 
-Rules: never say safe or unsafe. No verdict. No headers or bullets. Under 130 words total.`;
+Rules: never say safe or unsafe. No verdict. No headers, no bullets, no bold or italic markdown. Plain prose only. Under 130 words total.`;
 
   const res = await fetch('/api/read', {
     method: 'POST',
