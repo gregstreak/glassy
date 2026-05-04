@@ -107,7 +107,7 @@ Write a plain-language conditions read for an experienced open water swimmer.
 Paragraph 1: current conditions in swimmer language. Note chop vs groundswell. Factor in tidal and spot context.
 Paragraph 2: trajectory — is this the window or is it closing?
 Blank line then a single caveat sentence. Human tone.
-Rules: no markdown, no asterisks, no headers, no bullets. Never say safe or unsafe. Under 130 words.`;
+Rules: no markdown, no asterisks, no headers, no bullets. Never say safe or unsafe. Under 130 words. IMPORTANT: use the actual time of day provided — do not say morning if it is afternoon or evening.`;
 
   const res = await fetch('https://glassy-lake.vercel.app/api/read', {
     method: 'POST',
