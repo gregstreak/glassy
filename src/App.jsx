@@ -96,7 +96,7 @@ One line break then a single caveat sentence: forecast data as reference not aut
 
 Rules: never say safe or unsafe. No verdict. No headers or bullets. Under 130 words total.`;
 
-  const res = await fetch('https://glassy-lake.vercel.app/api/read', {
+  const res = await fetch('/api/read', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt }),
@@ -175,8 +175,7 @@ export default function App() {
   const w = r?.weather;
   const m = r?.marine;
 
-  const cleanRead = (r?.readText || "").replace(/^#+\s+.*$/gm,"").replace(/\*\*(.+?)\*\*/g,"$1").replace(/\*(.+?)\*/g,"$1").trim();
-  const readParas = cleanRead.split(/\n\n+/).filter(p => p.trim());
+  const readParas = r?.readText?.split(/\n\n+/).filter(p => p.trim()) || [];
   const bodyParas = readParas.length > 1 ? readParas.slice(0, -1) : readParas;
   const caveat = readParas.length > 1 ? readParas[readParas.length - 1] : '';
 
