@@ -349,6 +349,11 @@ export default function App() {
             </div>
           )}
         </div>
+        {/* Footer */}
+        <div style={{ textAlign: 'center', padding: '1rem 0 0.5rem', color: MUTED, fontSize: 11, letterSpacing: '0.1em' }}>
+          · by Signal &amp; Seed ·
+        </div>
+
       </div>
     </div>
   );
