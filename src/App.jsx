@@ -298,14 +298,14 @@ async function getForecastRead(locationName, forecast, tidalTurns, spot) {
     const wind = b.windSpeed != null ? `${b.windSpeed}km/h ${b.windDirection}` : 'wind unknown';
     const swell = b.swellHeight != null ? `, ${f1(b.swellHeight)}m swell` : '';
     const rain = b.rainProb != null && b.rainProb > 15 ? `, ${b.rainProb}% rain` : '';
-    return `${blockLabel(b.isoTime)}: ${wind}${swell}${rain}`;
+    const blockMs = new Date(b.isoTime).getTime();
+    const past = [...tidalTurns].reverse().find(t => t.time.getTime() <= blockMs);
+    const next = tidalTurns.find(t => t.time.getTime() > blockMs);
+    const tidalCtx = (past || next) ? ` [${past ? `${past.type==='high'?'HW':'LW'} ${past.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} ${Math.round((blockMs-past.time.getTime())/3600000)}h ago` : ''}${past&&next?', ':''}${next?`next ${next.type==='high'?'HW':'LW'} ${next.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} in ${Math.round((next.time.getTime()-blockMs)/3600000)}h`:''  }]` : '';
+    return `${blockLabel(b.isoTime)}: ${wind}${swell}${rain}${tidalCtx}`;
   }).join('\n');
 
-  const turnText = tidalTurns.length > 0
-    ? '\nTidal turns: ' + tidalTurns.map(t =>
-        `${t.type === 'high' ? 'HW' : 'LW'} ${t.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ${t.time.toLocaleDateString('en-GB', { weekday: 'short' })}`
-      ).join(', ')
-    : '';
+  const turnText = '';
 
   const prompt = `You are the conditions reader for Glassy, an open water swim app.
 Location: ${locationName}
