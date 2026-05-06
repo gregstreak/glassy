@@ -9,8 +9,8 @@ const MUTED = '#4A5A72', TEXT = '#F4F6F9', SUBTEXT = '#A8B8CC', GREEN = '#4A9A7A
 // ── Tidal calculation — epoch-anchored ────────────────────────────────────
 const _SEMI = 12 * 3600000 + 25 * 60000 + 14000;
 const _EPOCHS = {
-  'knysna-heads':  Date.UTC(2026, 4, 4, 3, 11, 0),
-  'knysna-lagoon': Date.UTC(2026, 4, 4, 3, 25, 0),
+  'knysna-heads':  Date.UTC(2026, 4, 6, 4, 8, 0),
+  'knysna-lagoon': Date.UTC(2026, 4, 6, 4, 22, 0),
   'hermanus':      Date.UTC(2026, 4, 4, 2, 30, 0),
   'gordons-bay':   Date.UTC(2026, 4, 4, 4,  0, 0),
   'fish-hoek':     Date.UTC(2026, 4, 4, 3, 45, 0),
