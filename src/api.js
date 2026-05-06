@@ -19,6 +19,42 @@ function getRainProb(entry) {
   return null;
 }
 
+// Build 8 × 6-hour forecast blocks from the raw API arrays.
+// Steps beyond the array length are silently omitted — if conditions.js
+// calls Open-Meteo with forecast_days=1, you'll get ~4 blocks instead of 8.
+// Fix: ensure forecast_days=3 (or higher) in api/conditions.js.
+function buildForecastBlocks(timeseries, marineData, bestIdx, mIdx) {
+  const blocks = [];
+  for (let step = 0; step < 8; step++) {
+    const tsIdx = bestIdx + step * 6;
+    const entry = timeseries[tsIdx];
+    if (!entry) break;
+    const det = entry?.data?.instant?.details || {};
+    const block = {
+      isoTime: entry.time,
+      windSpeed: det.wind_speed != null ? Math.round(det.wind_speed * 3.6) : null,
+      windDirection: cardinalWind(det.wind_from_direction),
+      rainProb: getRainProb(entry),
+      waveHeight: null,
+      swellHeight: null,
+      swellPeriod: null,
+      swellDirection: null,
+    };
+    if (marineData) {
+      const h = marineData.hourly;
+      const j = mIdx + step * 6;
+      if (h?.swell_wave_height && j < h.swell_wave_height.length) {
+        block.waveHeight    = h.wave_height?.[j]       ?? null;
+        block.swellHeight   = h.swell_wave_height?.[j] ?? null;
+        block.swellPeriod   = h.swell_wave_period?.[j] ?? null;
+        block.swellDirection = cardinalWind(h.swell_wave_direction?.[j]);
+      }
+    }
+    blocks.push(block);
+  }
+  return blocks;
+}
+
 export async function fetchConditions(lat, lon, hasMarine) {
   const res = await fetch('https://glassy-lake.vercel.app/api/conditions', {
     method: 'POST',
@@ -65,19 +101,21 @@ export async function fetchConditions(lat, lon, hasMarine) {
     waterTemp = sstData.hourly?.sea_surface_temperature?.[sstIdx] ?? null;
   }
 
+  // mIdx hoisted so buildForecastBlocks can use it
   let marine = null;
+  let mIdx = 0;
   if (marineData) {
     const mTimes = marineData.hourly?.time || [];
-    const mIdx = findCurrentHourIdx(mTimes);
+    mIdx = findCurrentHourIdx(mTimes);
     const h = marineData.hourly;
     marine = {
-      waveHeight: h?.wave_height?.[mIdx] ?? null,
-      wavePeriod: h?.wave_period?.[mIdx] ?? null,
+      waveHeight:    h?.wave_height?.[mIdx]       ?? null,
+      wavePeriod:    h?.wave_period?.[mIdx]        ?? null,
       waveDirection: cardinalWind(h?.wave_direction?.[mIdx]),
-      swellHeight: h?.swell_wave_height?.[mIdx] ?? null,
-      swellPeriod: h?.swell_wave_period?.[mIdx] ?? null,
+      swellHeight:   h?.swell_wave_height?.[mIdx]  ?? null,
+      swellPeriod:   h?.swell_wave_period?.[mIdx]  ?? null,
       swellDirection: cardinalWind(h?.swell_wave_direction?.[mIdx]),
-      windWaveHeight: h?.wind_wave_height?.[mIdx] ?? null,
+      windWaveHeight: h?.wind_wave_height?.[mIdx]  ?? null,
     };
     for (let i = 0; i < trajectory.length; i++) {
       const j = mIdx + 1 + i;
@@ -85,5 +123,6 @@ export async function fetchConditions(lat, lon, hasMarine) {
     }
   }
 
-  return { weather, marine, waterTemp, trajectory };
+  const forecast = buildForecastBlocks(timeseries, marineData, bestIdx, mIdx);
+  return { weather, marine, waterTemp, trajectory, forecast };
 }

@@ -11,8 +11,8 @@ export default async function handler(req, res) {
       fetch(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`, {
         headers: { 'User-Agent': 'GlassySwimApp/1.0 github.com/gregstreak/glassy' }
       }),
-      hasMarine ? fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height&timezone=auto&forecast_days=2`) : Promise.resolve(null),
-      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&hourly=sea_surface_temperature&timezone=auto&forecast_days=1`)
+      hasMarine ? fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height&timezone=auto&forecast_days=3`) : Promise.resolve(null),
+      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&hourly=sea_surface_temperature&timezone=auto&forecast_days=3`)
     ]);
 
     const metData = await metRes.json();
