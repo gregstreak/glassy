@@ -98,6 +98,8 @@ const WindWarning = ({ windSpeed, windDirection }) => {
     </div>
   );
 };
+
+const TidalBadge = ({ tidal }) => {
   if (!tidal) return null;
   const col = tidal.range === 'spring' ? AMBER : tidal.range === 'neap' ? GREEN : SUBTEXT;
   return (
