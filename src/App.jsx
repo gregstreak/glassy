@@ -9,8 +9,8 @@ const MUTED = '#4A5A72', TEXT = '#F4F6F9', SUBTEXT = '#A8B8CC', GREEN = '#4A9A7A
 // ── Tidal calculation — epoch-anchored ────────────────────────────────────
 const _SEMI = 12 * 3600000 + 25 * 60000 + 14000;
 const _EPOCHS = {
-  'knysna-heads':  Date.UTC(2026, 4, 6, 4, 8, 0),
-  'knysna-lagoon': Date.UTC(2026, 4, 6, 4, 22, 0),
+  'knysna-heads':  Date.UTC(2026, 4, 4, 3, 11, 0),
+  'knysna-lagoon': Date.UTC(2026, 4, 4, 3, 25, 0),
   'hermanus':      Date.UTC(2026, 4, 4, 2, 30, 0),
   'gordons-bay':   Date.UTC(2026, 4, 4, 4,  0, 0),
   'fish-hoek':     Date.UTC(2026, 4, 4, 3, 45, 0),
@@ -99,13 +99,19 @@ const WindWarning = ({ windSpeed, windDirection }) => {
   );
 };
 
-const TidalBadge = ({ tidal }) => {
+const TidalBadge = ({ tidal, spot }) => {
   if (!tidal) return null;
   const col = tidal.range === 'spring' ? AMBER : tidal.range === 'neap' ? GREEN : SUBTEXT;
+  const isIntermittent = spot?.tidalType === 'intermittent';
   return (
     <div style={{ background: SURFACE, borderRadius: 7, padding: '8px 11px', marginBottom: '0.75rem', borderLeft: `3px solid ${col}` }}>
       <div style={{ fontSize: 9, letterSpacing: '0.14em', color: MUTED, textTransform: 'uppercase', marginBottom: 3 }}>Tidal State · {tidal.range}</div>
       <div style={{ fontSize: 13, color: SUBTEXT, lineHeight: 1.5 }}>{tidal.note}</div>
+      {isIntermittent && (
+        <div style={{ fontSize: 11, color: MUTED, marginTop: 5, fontStyle: 'italic', lineHeight: 1.5 }}>
+          This lagoon or river mouth opens and closes seasonally. If currently closed to the sea, disregard tidal current — conditions will be wind-driven only.
+        </div>
+      )}
     </div>
   );
 };
@@ -308,7 +314,7 @@ export default function App() {
                 </div>
               )}
 
-              <TidalBadge tidal={r.tidal} />
+              <TidalBadge tidal={r.tidal} spot={r.spot} />
               <WindWarning windSpeed={w.windSpeed} windDirection={w.windDirection} />
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: '1rem' }}>
