@@ -584,7 +584,7 @@ export const SPOTS = [
     profile: 'KZN south coast beach. Warm Indian Ocean. KZN Sharks Board protection at main beaches. Check flag status before entering.',
   },
   {
-    id: scottsburgh', 
+    id: 'scottburgh', 
     name: 'Scottburgh',
     region: 'KwaZulu-Natal',
     aliases: ['scottburgh', 'scottburgh beach''scottsburgh', 'scottsburgh beach'],
