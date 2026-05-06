@@ -100,15 +100,19 @@ const WindWarning = ({ windSpeed, windDirection }) => {
 };
 
 const TidalBadge = ({ tidal, spot }) => {
-  if (!tidal) return null;
-  const col = tidal.range === 'spring' ? AMBER : tidal.range === 'neap' ? GREEN : SUBTEXT;
+  if (!tidal && spot?.tidalType !== 'intermittent') return null;
+  const col = tidal ? (tidal.range === 'spring' ? AMBER : tidal.range === 'neap' ? GREEN : SUBTEXT) : MUTED;
   const isIntermittent = spot?.tidalType === 'intermittent';
   return (
     <div style={{ background: SURFACE, borderRadius: 7, padding: '8px 11px', marginBottom: '0.75rem', borderLeft: `3px solid ${col}` }}>
-      <div style={{ fontSize: 9, letterSpacing: '0.14em', color: MUTED, textTransform: 'uppercase', marginBottom: 3 }}>Tidal State · {tidal.range}</div>
-      <div style={{ fontSize: 13, color: SUBTEXT, lineHeight: 1.5 }}>{tidal.note}</div>
+      {tidal && (
+        <>
+          <div style={{ fontSize: 9, letterSpacing: '0.14em', color: MUTED, textTransform: 'uppercase', marginBottom: 3 }}>Tidal State · {tidal.range}</div>
+          <div style={{ fontSize: 13, color: SUBTEXT, lineHeight: 1.5 }}>{tidal.note}</div>
+        </>
+      )}
       {isIntermittent && (
-        <div style={{ fontSize: 11, color: MUTED, marginTop: 5, fontStyle: 'italic', lineHeight: 1.5 }}>
+        <div style={{ fontSize: 11, color: MUTED, marginTop: tidal ? 5 : 0, fontStyle: 'italic', lineHeight: 1.5 }}>
           This lagoon or river mouth opens and closes seasonally. If currently closed to the sea, disregard tidal current — conditions will be wind-driven only.
         </div>
       )}
