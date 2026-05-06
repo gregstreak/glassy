@@ -19,7 +19,7 @@ export const SPOTS = [
     lat: -34.0556, lon: 23.0497,
     hasMarine: false, isTidal: true,
     exposure: 'sheltered',
-    profile: 'Sheltered tidal estuary. No ocean swell. Conditions driven by local wind. Water typically warmer than the sea.',
+    profile: 'Sheltered tidal estuary — no ocean swell penetrates. Conditions driven entirely by local wind. In light to moderate winds it is calm. However the lagoon has a long SE fetch of up to 17km — in SE winds above 35-40 km/h conditions become significantly rough with short steep chop. Not sheltered in strong SE conditions. Water typically warmer than the sea.',
   },
   {
     id: 'buffalo-bay',
@@ -415,9 +415,9 @@ export const SPOTS = [
   },
   {
     id: 'durban-beach-club',
-    name: 'Durban Under-Water Club (DUC)',
+    name: 'Durban Beach Club',
     region: 'KwaZulu-Natal',
-    aliases: ['duc', 'durban under-water club', 'durban underwater club', 'durban beach club', 'durban beach'],
+    aliases: ['durban beach club', 'duc', 'durban beach'],
     lat: -29.8654, lon: 31.0514,
     hasMarine: true, isTidal: false,
     exposure: 'open ocean',

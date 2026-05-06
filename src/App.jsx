@@ -80,7 +80,24 @@ const Cell = ({ label, value, unit, highlight }) => (
   </div>
 );
 
-const TidalBadge = ({ tidal }) => {
+const WindWarning = ({ windSpeed, windDirection }) => {
+  if (!windSpeed || windSpeed < 40) return null;
+  const level = windSpeed >= 60 ? 'severe' : 'strong';
+  const color = windSpeed >= 60 ? '#C0392B' : '#E09040';
+  const bg = windSpeed >= 60 ? '#2A1515' : '#2A1E10';
+  return (
+    <div style={{ background: bg, border: `1px solid ${color}55`, borderRadius: 7, padding: '8px 11px', marginBottom: '0.75rem', borderLeft: `3px solid ${color}` }}>
+      <div style={{ fontSize: 9, letterSpacing: '0.14em', color, textTransform: 'uppercase', marginBottom: 3 }}>
+        {level === 'severe' ? '⚠ Severe Wind Warning' : '⚠ Strong Wind'}
+      </div>
+      <div style={{ fontSize: 13, color: SUBTEXT, lineHeight: 1.5 }}>
+        {windSpeed >= 60
+          ? `${Math.round(windSpeed)} km/h from ${windDirection} — conditions may be extreme. Forecast data alone is insufficient. Get eyes on the water.`
+          : `${Math.round(windSpeed)} km/h from ${windDirection} — conditions will be rougher than calm-day estimates suggest.`}
+      </div>
+    </div>
+  );
+};
   if (!tidal) return null;
   const col = tidal.range === 'spring' ? AMBER : tidal.range === 'neap' ? GREEN : SUBTEXT;
   return (
@@ -290,6 +307,7 @@ export default function App() {
               )}
 
               <TidalBadge tidal={r.tidal} />
+              <WindWarning windSpeed={w.windSpeed} windDirection={w.windDirection} />
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: '1rem' }}>
                 {m ? <>
