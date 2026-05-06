@@ -587,7 +587,7 @@ export const SPOTS = [
     id: 'scottburgh', 
     name: 'Scottburgh',
     region: 'KwaZulu-Natal',
-    aliases: ['scottburgh', 'scottburgh beach''scottsburgh', 'scottsburgh beach'],
+    aliases: ['scottburgh', 'scottburgh beach', 'scottsburgh', 'scottsburgh beach'],
     lat: -30.2833, lon: 30.7667,
     hasMarine: true, isTidal: false,
     exposure: 'open ocean',
