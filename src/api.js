@@ -19,22 +19,32 @@ function getRainProb(entry) {
   return null;
 }
 
-// Build 8 × 6-hour forecast blocks from the raw API arrays.
-// Steps beyond the array length are silently omitted — if conditions.js
-// calls Open-Meteo with forecast_days=1, you'll get ~4 blocks instead of 8.
-// Fix: ensure forecast_days=3 (or higher) in api/conditions.js.
-function buildForecastBlocks(timeseries, marineData, bestIdx, mIdx) {
+function buildForecastBlocks(timeseries, marineData, precipData, bestIdx, mIdx) {
+  const pIdx = precipData?.hourly?.time ? findCurrentHourIdx(precipData.hourly.time) : 0;
   const blocks = [];
   for (let step = 0; step < 8; step++) {
     const tsIdx = bestIdx + step * 6;
     const entry = timeseries[tsIdx];
     if (!entry) break;
     const det = entry?.data?.instant?.details || {};
+
+    // Take higher of met.no and Open-Meteo rain probability
+    const metRain = getRainProb(entry);
+    let omRain = null;
+    if (precipData?.hourly?.precipitation_probability) {
+      const j = pIdx + step * 6;
+      if (j < precipData.hourly.precipitation_probability.length) {
+        omRain = precipData.hourly.precipitation_probability[j] ?? null;
+      }
+    }
+    const rainProb = metRain != null && omRain != null ? Math.max(metRain, omRain)
+      : metRain != null ? metRain : omRain;
+
     const block = {
       isoTime: entry.time,
       windSpeed: det.wind_speed != null ? Math.round(det.wind_speed * 3.6) : null,
       windDirection: cardinalWind(det.wind_from_direction),
-      rainProb: getRainProb(entry),
+      rainProb,
       waveHeight: null,
       swellHeight: null,
       swellPeriod: null,
@@ -61,7 +71,7 @@ export async function fetchConditions(lat, lon, hasMarine) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ lat, lon, hasMarine })
   });
-  const { metData, marineData, sstData } = await res.json();
+  const { metData, marineData, sstData, precipData } = await res.json();
 
   const timeseries = metData.properties?.timeseries || [];
   const now = new Date();
@@ -123,6 +133,16 @@ export async function fetchConditions(lat, lon, hasMarine) {
     }
   }
 
-  const forecast = buildForecastBlocks(timeseries, marineData, bestIdx, mIdx);
+  // Blend rain: take higher of met.no and Open-Meteo precipitation probability
+  if (precipData?.hourly?.precipitation_probability) {
+    const pTimes = precipData.hourly.time || [];
+    const pIdx = findCurrentHourIdx(pTimes);
+    const omRain = precipData.hourly.precipitation_probability[pIdx] ?? null;
+    if (omRain != null) {
+      weather.rainProb = weather.rainProb != null ? Math.max(weather.rainProb, omRain) : omRain;
+    }
+  }
+
+  const forecast = buildForecastBlocks(timeseries, marineData, precipData, bestIdx, mIdx);
   return { weather, marine, waterTemp, trajectory, forecast };
 }

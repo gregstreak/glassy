@@ -146,6 +146,25 @@ const WindWarning = ({ windSpeed, windDirection }) => {
   );
 };
 
+const RainWarning = ({ rainProb }) => {
+  if (rainProb == null || rainProb < 80) return null;
+  const severe = rainProb >= 95;
+  const color = severe ? RED : AMBER;
+  const bg = severe ? '#2A1515' : '#2A1E10';
+  return (
+    <div style={{ background: bg, border: `1px solid ${color}55`, borderRadius: 7, padding: '8px 11px', marginBottom: '0.75rem', borderLeft: `3px solid ${color}` }}>
+      <div style={{ fontSize: 9, letterSpacing: '0.14em', color, textTransform: 'uppercase', marginBottom: 3 }}>
+        {severe ? '⚠ Extreme Rain' : '⚠ Heavy Rain Likely'}
+      </div>
+      <div style={{ fontSize: 13, color: SUBTEXT, lineHeight: 1.5 }}>
+        {severe
+          ? `${rainProb}% rain probability — flooding and poor water quality likely. Conditions on the ground may differ significantly from forecast data.`
+          : `${rainProb}% rain probability — consider river levels, water turbidity and visibility before entering.`}
+      </div>
+    </div>
+  );
+};
+
 const TidalBadge = ({ tidal, spot }) => {
   if (!tidal && spot?.tidalType !== 'intermittent') return null;
   const col = tidal ? (tidal.range === 'spring' ? AMBER : tidal.range === 'neap' ? GREEN : SUBTEXT) : MUTED;
@@ -490,6 +509,7 @@ export default function App() {
                 <>
                   <TidalBadge tidal={r.tidal} spot={r.spot} />
                   <WindWarning windSpeed={w.windSpeed} windDirection={w.windDirection} />
+                  <RainWarning rainProb={w.rainProb} />
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: '1rem' }}>
                     {m ? <>
