@@ -127,6 +127,17 @@ const Cell = ({ label, value, unit, highlight }) => (
   </div>
 );
 
+const SwimLoadingCell = () => (
+  <a href="https://www.swimloading.com/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+    <div style={{ background: SURFACE, borderRadius: 7, padding: '9px 11px', border: `1px solid #0284c722`, cursor: 'pointer' }}>
+      <div style={{ fontSize: 9, letterSpacing: '0.14em', color: MUTED, textTransform: 'uppercase', marginBottom: 3 }}>Water Temp</div>
+      <div style={{ fontSize: 12, color: '#0284c7', lineHeight: 1.3 }}>
+        Check SwimLoading <span style={{ fontSize: 10 }}>↗</span>
+      </div>
+    </div>
+  </a>
+);
+
 const WindWarning = ({ windSpeed, windDirection }) => {
   if (!windSpeed || windSpeed < 40) return null;
   const level = windSpeed >= 60 ? 'severe' : 'strong';
@@ -445,6 +456,10 @@ export default function App() {
                   {s.name}
                 </button>
               ))}
+              <a href="https://www.swimloading.com/" target="_blank" rel="noopener noreferrer"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#0284c711', border: '1px solid #0284c733', borderRadius: 20, color: '#0284c7', fontSize: 11, padding: '4px 10px', textDecoration: 'none' }}>
+                Water temps · SwimLoading ↗
+              </a>
             </div>
           )}
         </div>
@@ -516,12 +531,14 @@ export default function App() {
                       <Cell label="Swell" value={m.swellHeight != null ? f1(m.swellHeight) : null} unit="m" />
                       <Cell label="Wave Ht" value={m.waveHeight != null ? f1(m.waveHeight) : null} unit="m" />
                       <Cell label={`Wind ${w.windDirection}`} value={w.windSpeed != null ? f0(w.windSpeed) : null} unit="km/h" />
-                      <Cell label="Water Temp" value={r.waterTemp != null ? f1(r.waterTemp) : null} unit="°C" highlight={r.waterTemp != null} />
+                      {r.waterTemp != null
+                        ? <Cell label="Water Temp" value={f1(r.waterTemp)} unit="°C" highlight />
+                        : <SwimLoadingCell />}
                       <Cell label="Air Temp" value={w.airTemp != null ? f1(w.airTemp) : null} unit="°C" />
                     </> : <>
                       <Cell label={`Wind ${w.windDirection}`} value={w.windSpeed != null ? f0(w.windSpeed) : null} unit="km/h" />
                       <Cell label="Air Temp" value={w.airTemp != null ? f1(w.airTemp) : null} unit="°C" />
-                      <Cell label="Water Temp" value={r.waterTemp != null ? f1(r.waterTemp) : null} unit="°C" highlight={r.waterTemp != null} />
+                      <SwimLoadingCell />
                       <Cell label="Rain" value={w.rainProb != null ? String(w.rainProb) : null} unit="%" />
                     </>}
                   </div>
