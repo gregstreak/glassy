@@ -576,6 +576,7 @@ export default function App() {
                   Glassy reads atmospheric and marine data only — wind, swell, tide, and temperature. It cannot see river flood state, water turbidity, debris, or any condition requiring eyes on the water. Water temperature is satellite-derived and may differ significantly from actual conditions, particularly in estuaries and lagoons. Always assess local conditions before entering.
                 </div>
               </div>
+            </div>
           )}
         </div>
 
