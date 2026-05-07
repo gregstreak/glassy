@@ -105,7 +105,7 @@ export async function fetchConditions(lat, lon, hasMarine) {
   }
 
   let waterTemp = null;
-  if (sstData) {
+  if (hasMarine && sstData) {
     const sstTimes = sstData.hourly?.time || [];
     const sstIdx = findCurrentHourIdx(sstTimes);
     waterTemp = sstData.hourly?.sea_surface_temperature?.[sstIdx] ?? null;
