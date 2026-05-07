@@ -19,7 +19,7 @@ export const SPOTS = [
     lat: -34.0556, lon: 23.0497,
     hasMarine: false, isTidal: true, tidalType: 'permanent',
     exposure: 'sheltered',
-    profile: 'Sheltered tidal estuary — permanently connected to the sea. The lagoon is 17km long with entry points from the Heads to Belvidere, White Bridge, Red Bridge and the Yacht Club. No ocean swell penetrates. Conditions driven by local wind. In SE winds above 35-40 km/h the long SE fetch creates significant short steep chop. Tidal currents run throughout — strongest mid-tide, slack near the turns. Spring tides produce stronger flow.',
+    profile: 'Sheltered tidal estuary — permanently connected to the sea. The lagoon is 17km long with entry points from the Heads to Belvidere, White Bridge, Red Bridge and the Yacht Club. No ocean swell penetrates. Conditions driven by local wind. In SE winds above 35-40 km/h the long SE fetch creates significant short steep chop. Tidal currents run throughout — strongest mid-tide, slack near the turns. Spring tides produce stronger flow. Note: satellite water temperature significantly overstates actual lagoon temperature, particularly in winter — treat displayed water temp as indicative only.',
   },
   {
     id: 'buffalo-bay',
@@ -119,7 +119,7 @@ export const SPOTS = [
     lat: -34.0050, lon: 23.4200,
     hasMarine: false, isTidal: true, tidalType: 'permanent',
     exposure: 'sheltered',
-    profile: 'Sheltered tidal estuary permanently connected to the sea — the Keurbooms and Bitou rivers meet before the mouth. This is where open water swimmers in the Plett area swim. No swell penetrates. Conditions driven by local wind and tidal state. The swim near Potjies offers calm flat water on most days. Tidal current runs throughout — strongest mid-tide, slack near the turns. Spring tides produce stronger flow.',
+    profile: 'Sheltered tidal estuary permanently connected to the sea — the Keurbooms and Bitou rivers meet before the mouth. This is where open water swimmers in the Plett area swim. No swell penetrates. Conditions driven by local wind and tidal state. The swim near Potjies offers calm flat water on most days. In S and SE winds above 35-40 km/h the fetch across the estuary creates significant chop — conditions deteriorate quickly and the spot loses its sheltered character. Tidal current runs throughout — strongest mid-tide, slack near the turns. Spring tides produce stronger flow. Note: satellite water temperature overstates actual estuary temperature, particularly in winter.',
   },
 
   // ── EASTERN CAPE ──────────────────────────────────────────────────────────
@@ -584,10 +584,10 @@ export const SPOTS = [
     profile: 'KZN south coast beach. Warm Indian Ocean. KZN Sharks Board protection at main beaches. Check flag status before entering.',
   },
   {
-    id: 'scottburgh', 
+    id: 'scottburgh',
     name: 'Scottburgh',
     region: 'KwaZulu-Natal',
-    aliases: ['scottburgh', 'scottburgh beach', 'scottsburgh', 'scottsburgh beach'],
+    aliases: ['scottburgh', 'scottburgh beach'],
     lat: -30.2833, lon: 30.7667,
     hasMarine: true, isTidal: false,
     exposure: 'open ocean',
@@ -685,8 +685,8 @@ export function matchSpot(query) {
 
 // Quick chips on the idle screen — one per region
 export const QUICK_SPOT_IDS = [
-  'knysna-heads', 'knysna-lagoon', 'buffalo-bay',
-  'clifton-4th', 'camps-bay', 'umhlanga',
+  'knysna-lagoon', 'sedgefield-lagoon', 'durban-beach-club',
+  'clifton-4th', 'camps-bay',
 ];
 
 export function quickSpots() {

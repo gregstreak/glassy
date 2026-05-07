@@ -236,8 +236,8 @@ async function getRead(locationName, weather, marine, waterTemp, tidal, spot) {
     weather.windSpeed < 10 ? `light (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
     weather.windSpeed < 20 ? `moderate (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
     weather.windSpeed < 35 ? `fresh (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
-    weather.windSpeed < 50 ? `strong (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
-    weather.windSpeed < 65 ? `very strong (${f0(weather.windSpeed)} km/h from ${weather.windDirection}) — likely no-go for most swimmers` :
+    weather.windSpeed < 40 ? `strong (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
+    weather.windSpeed < 60 ? `very strong (${f0(weather.windSpeed)} km/h from ${weather.windDirection}) — likely no-go for most swimmers` :
     `extreme (${f0(weather.windSpeed)} km/h from ${weather.windDirection}) — conditions are not suitable`;
 
   let swellLabel = 'no ocean swell';
@@ -569,7 +569,13 @@ export default function App() {
                 <button onClick={refresh} style={{ background: 'transparent', border: `1px solid ${AMBER}55`, borderRadius: 6, color: AMBER, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '5px 12px', cursor: 'pointer' }}>↻ Refresh</button>
                 <button onClick={reset} style={{ background: 'transparent', border: '1px solid #2A3A54', borderRadius: 6, color: MUTED, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '5px 10px', cursor: 'pointer' }}>New location</button>
               </div>
-            </div>
+
+              {/* Data limitation notice */}
+              <div style={{ marginTop: '1rem', padding: '10px 12px', background: '#1A2333', borderRadius: 7, borderLeft: '2px solid #2A3A54' }}>
+                <div style={{ fontSize: 10, color: MUTED, lineHeight: 1.6 }}>
+                  Glassy reads atmospheric and marine data only — wind, swell, tide, and temperature. It cannot see river flood state, water turbidity, debris, or any condition requiring eyes on the water. Water temperature is satellite-derived and may differ significantly from actual conditions, particularly in estuaries and lagoons. Always assess local conditions before entering.
+                </div>
+              </div>
           )}
         </div>
 
