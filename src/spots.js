@@ -19,7 +19,7 @@ export const SPOTS = [
     lat: -34.0556, lon: 23.0497,
     hasMarine: false, isTidal: true, tidalType: 'permanent',
     exposure: 'sheltered',
-    profile: 'Sheltered tidal estuary — permanently connected to the sea. The lagoon is 17km long with entry points from the Heads to Belvidere, White Bridge, Red Bridge and the Yacht Club. No ocean swell penetrates. Conditions driven by local wind. In SE winds above 35-40 km/h the long SE fetch creates significant short steep chop. Tidal currents run throughout — strongest mid-tide, slack near the turns. Spring tides produce stronger flow. Note: satellite water temperature significantly overstates actual lagoon temperature, particularly in winter — treat displayed water temp as indicative only.',
+    profile: 'Sheltered tidal estuary — permanently connected to the sea. The lagoon is 17km long with entry points from the Heads to Belvidere, White Bridge, Red Bridge and the Yacht Club. No ocean swell penetrates. Conditions driven by local wind. In SE winds above 35-40 km/h the long SE fetch creates significant short steep chop. Tidal currents run throughout — strongest mid-tide, slack near the turns. Spring tides produce stronger flow. Tidal lag: turn times are anchored to the Heads (the mouth). At the Yacht Club 4km upstream, the felt current turn lags the stated time by 20-30 minutes — plan accordingly. Note: satellite water temperature significantly overstates actual lagoon temperature, particularly in winter — treat displayed water temp as indicative only.',
   },
   {
     id: 'buffalo-bay',

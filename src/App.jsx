@@ -29,12 +29,12 @@ function getTidalState(date, spot) {
   while (hw > now) hw -= _SEMI;
   const angle = ((now - hw) / _SEMI) * 2 * Math.PI;
   const rate = -Math.sin(angle);
-  const isSlack = Math.abs(rate) < 0.2;
   const direction = rate >= 0 ? 'incoming' : 'outgoing';
   let h2t = rate >= 0
     ? ((2 * Math.PI - angle) / (2 * Math.PI)) * _SEMI / 3600000
     : ((Math.PI - angle) / (2 * Math.PI)) * _SEMI / 3600000;
   h2t = Math.max(0.1, Math.round(h2t * 10) / 10);
+  const isSlack = h2t <= 0.75; // within 45 minutes of the next turn
   const LUNAR = 29.53 * 24 * 3600000;
   const phase = ((now - Date.UTC(2000, 0, 6, 18, 14, 0)) % LUNAR) / LUNAR;
   const ds = Math.min(Math.min(phase, 1 - phase), Math.abs(phase - 0.5));
