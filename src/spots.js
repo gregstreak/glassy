@@ -149,7 +149,7 @@ export const SPOTS = [
     region: 'Eastern Cape',
     aliases: ['kenton', 'kenton on sea', 'kenton-on-sea', 'bushmans river', 'kariega river'],
     lat: -33.6833, lon: 26.6667,
-    hasMarine: false, isTidal: true, tidalType: 'permanent',
+    hasMarine: false, isTidal: true, tidalType: 'intermittent',
     exposure: 'sheltered',
     profile: 'The Bushmans and Kariega rivers provide sheltered tidal estuary swimming — this is where OW swimming in the Kenton area happens, not the open coast. Warm water. Calm flat water away from the main tidal flow. Tidal current runs through the channels — check state before swimming near the mouth. River water quality can be affected after heavy rain upstream.',
   },

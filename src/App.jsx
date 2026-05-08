@@ -10,11 +10,13 @@ const RED = '#C0392B';
 // ── Tidal calculation — epoch-anchored ────────────────────────────────────
 const _SEMI = 12 * 3600000 + 25 * 60000 + 14000;
 const _EPOCHS = {
-  'knysna-heads':  Date.UTC(2026, 4, 4, 3, 11, 0),
-  'knysna-lagoon': Date.UTC(2026, 4, 4, 3, 25, 0),
-  'hermanus':      Date.UTC(2026, 4, 4, 2, 30, 0),
-  'gordons-bay':   Date.UTC(2026, 4, 4, 4,  0, 0),
-  'fish-hoek':     Date.UTC(2026, 4, 4, 3, 45, 0),
+  'knysna-heads':   Date.UTC(2026, 4, 4, 3, 11, 0),
+  'knysna-lagoon':  Date.UTC(2026, 4, 4, 3, 25, 0),
+  'hermanus':       Date.UTC(2026, 4, 4, 2, 30, 0),
+  'gordons-bay':    Date.UTC(2026, 4, 4, 4,  0, 0),
+  'fish-hoek':      Date.UTC(2026, 4, 4, 3, 45, 0),
+  'keurbooms-river': Date.UTC(2026, 4, 8, 4, 55, 0),
+  'kenton-river':   Date.UTC(2026, 4, 8, 4, 49, 0),
 };
 
 function getTidalState(date, spot) {
