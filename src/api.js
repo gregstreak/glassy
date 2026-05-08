@@ -65,6 +65,24 @@ function buildForecastBlocks(timeseries, marineData, precipData, bestIdx, mIdx) 
   return blocks;
 }
 
+// Count hours in the past 24h with rain probability >= 70%.
+// Uses Open-Meteo precipData which includes past_hours=48.
+function computeSustainedRain(precipData, currentPIdx) {
+  if (!precipData?.hourly?.precipitation_probability) return { heavyHours24: 0, heavyHours48: 0 };
+  const probs = precipData.hourly.precipitation_probability;
+  let heavyHours24 = 0, heavyHours48 = 0;
+  for (let i = 1; i <= 48; i++) {
+    const j = currentPIdx - i;
+    if (j < 0) break;
+    const prob = probs[j];
+    if (prob != null && prob >= 70) {
+      if (i <= 24) heavyHours24++;
+      heavyHours48++;
+    }
+  }
+  return { heavyHours24, heavyHours48 };
+}
+
 export async function fetchConditions(lat, lon, hasMarine) {
   const res = await fetch('https://glassy-lake.vercel.app/api/conditions', {
     method: 'POST',
@@ -143,6 +161,10 @@ export async function fetchConditions(lat, lon, hasMarine) {
     }
   }
 
+  // Compute sustained rain over past 24/48 hours
+  const pIdxForHistory = precipData?.hourly?.time ? findCurrentHourIdx(precipData.hourly.time) : 0;
+  const sustainedRain = computeSustainedRain(precipData, pIdxForHistory);
+
   const forecast = buildForecastBlocks(timeseries, marineData, precipData, bestIdx, mIdx);
-  return { weather, marine, waterTemp, trajectory, forecast };
+  return { weather, marine, waterTemp, trajectory, forecast, sustainedRain };
 }

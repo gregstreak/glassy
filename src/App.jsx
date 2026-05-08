@@ -178,6 +178,26 @@ const RainWarning = ({ rainProb }) => {
   );
 };
 
+const PostStormWarning = ({ sustainedRain, spot }) => {
+  if (!sustainedRain || spot?.hasMarine !== false) return null;
+  if (sustainedRain.heavyHours24 < 8) return null;
+  const extreme = sustainedRain.heavyHours24 >= 16;
+  const color = extreme ? RED : AMBER;
+  const bg = extreme ? '#2A1515' : '#2A1E10';
+  return (
+    <div style={{ background: bg, border: `1px solid ${color}55`, borderRadius: 7, padding: '8px 11px', marginBottom: '0.75rem', borderLeft: `3px solid ${color}` }}>
+      <div style={{ fontSize: 9, letterSpacing: '0.14em', color, textTransform: 'uppercase', marginBottom: 3 }}>
+        {extreme ? '⚠ Post-Storm Conditions' : '⚠ Recent Heavy Rainfall'}
+      </div>
+      <div style={{ fontSize: 13, color: SUBTEXT, lineHeight: 1.5 }}>
+        {extreme
+          ? `Heavy rain recorded for ${sustainedRain.heavyHours24}+ of the past 24 hours. River discharge, debris and poor water quality are likely — atmospheric data cannot detect these conditions. Verify on the ground before entering.`
+          : `Significant rainfall over the past 24 hours. Check for river discharge and water quality before entering this lagoon or estuary.`}
+      </div>
+    </div>
+  );
+};
+
 const TidalBadge = ({ tidal, spot }) => {
   if (!tidal && spot?.tidalType !== 'intermittent') return null;
   const col = tidal ? (tidal.range === 'spring' ? AMBER : tidal.range === 'neap' ? GREEN : SUBTEXT) : MUTED;
@@ -263,7 +283,7 @@ const TidalTurnsRow = ({ tidalTurns }) => {
 };
 
 // ── API calls ─────────────────────────────────────────────────────────────
-async function getRead(locationName, weather, marine, waterTemp, tidal, spot) {
+async function getRead(locationName, weather, marine, waterTemp, tidal, spot, sustainedRain) {
   const windLabel = weather.windSpeed == null ? 'calm' :
     weather.windSpeed < 10 ? `light (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
     weather.windSpeed < 20 ? `moderate (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
@@ -297,6 +317,10 @@ async function getRead(locationName, weather, marine, waterTemp, tidal, spot) {
   const timeLabel = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) +
     ' on ' + now.toLocaleDateString('en-GB', {weekday: 'long'});
 
+  const postStormNote = (sustainedRain?.heavyHours24 >= 8 && spot?.hasMarine === false)
+    ? `\nPost-storm context: High rain probability was recorded for approximately ${sustainedRain.heavyHours24} of the past 24 hours. For this lagoon or estuary, this likely means river discharge, floating debris, and poor water quality that atmospheric data cannot detect. This is a significant caution — even if current wind and tidal conditions look acceptable, post-storm ground conditions may make this spot unsuitable. Do not recommend going without explicitly acknowledging this risk.`
+    : '';
+
   const prompt = `You are the conditions reader for Glassy, an open water swim app.
 Location: ${locationName}
 Time: ${timeLabel}
@@ -307,7 +331,7 @@ Pre-translated conditions (do not change these descriptions):
 - Wind: ${windLabel}
 ${tidalLabel ? `- Tidal: ${tidalLabel}` : ''}
 ${tempLabel ? `- ${tempLabel}, ${airLabel}` : ''}
-${weather.rainProb != null && weather.rainProb > 20 ? `- Rain: ${weather.rainProb}% probability` : ''}
+${weather.rainProb != null && weather.rainProb > 20 ? `- Rain: ${weather.rainProb}% probability` : ''}${postStormNote}
 
 Write 2 short paragraphs for an experienced open water swimmer.
 Paragraph 1: what the conditions feel like right now. Use the pre-translated descriptions above — do not invent or change any figures or period labels.
@@ -390,16 +414,16 @@ export default function App() {
         target.name = [loc.name, loc.admin1, loc.country].filter(Boolean).join(', ');
       }
       setPhaseLabel('Fetching conditions');
-      const { weather, marine, waterTemp, trajectory, forecast } = await fetchConditions(lat, lon, target.hasMarine !== false);
+      const { weather, marine, waterTemp, trajectory, forecast, sustainedRain } = await fetchConditions(lat, lon, target.hasMarine !== false);
       setPhaseLabel('Calculating tidal state');
       const tidal = spot ? getTidalState(new Date(), spot) : null;
       const tidalTurns = spot ? getTidalTurns(spot, new Date()) : [];
       setPhaseLabel('Writing the read');
-      const readText = await getRead(target.name, weather, marine, waterTemp, tidal, spot);
+      const readText = await getRead(target.name, weather, marine, waterTemp, tidal, spot, sustainedRain);
       setPhaseLabel('Scanning the window');
       const forecastRead = await getForecastRead(target.name, forecast, tidalTurns, spot);
       setLastSpot(spot || target);
-      setResult({ spot, locationName: target.name, weather, marine, waterTemp, tidal, tidalTurns, trajectory, forecast, readText, forecastRead });
+      setResult({ spot, locationName: target.name, weather, marine, waterTemp, tidal, tidalTurns, trajectory, forecast, sustainedRain, readText, forecastRead });
       setPhase('done');
     } catch (err) {
       setErrMsg(err.message || 'Could not load conditions');
@@ -527,6 +551,7 @@ export default function App() {
                   <TidalBadge tidal={r.tidal} spot={r.spot} />
                   <WindWarning windSpeed={w.windSpeed} windDirection={w.windDirection} />
                   <RainWarning rainProb={w.rainProb} />
+                  <PostStormWarning sustainedRain={r.sustainedRain} spot={r.spot} />
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: '1rem' }}>
                     {m ? <>
