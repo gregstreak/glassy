@@ -49,7 +49,7 @@ export const SPOTS = [
     lat: -34.0167, lon: 22.7833,
     hasMarine: false, isTidal: true, tidalType: 'intermittent',
     exposure: 'sheltered',
-    profile: 'Sheltered coastal lagoon (Swartvlei). No ocean swell. Wind-driven surface conditions. The mouth to the sea opens and closes seasonally — when closed there is no tidal current and conditions are lake-like. When open, tidal exchange creates current.',
+    profile: 'Sheltered coastal lagoon (Swartvlei). Wind is the primary sea state here — there is no ocean swell, but do not interpret this as calm. At 40+ km/h the lagoon surface is rough with steep wind chop. The mouth to the sea opens and closes seasonally — when closed there is no tidal current and conditions are lake-like. When open, tidal exchange creates current. Note: satellite water temperature substantially overstates actual lagoon temperature, particularly in winter — actual temperature can be significantly colder than displayed.',
   },
   {
     id: 'wilderness-lagoon',
@@ -59,7 +59,7 @@ export const SPOTS = [
     lat: -33.9950, lon: 22.5900,
     hasMarine: false, isTidal: true, tidalType: 'intermittent',
     exposure: 'sheltered',
-    profile: 'Sheltered river lagoon (Touw River mouth). Calm flat water when the mouth is closed. When open to the sea, tidal current runs. The mouth opens and closes seasonally — check local conditions before assuming tidal flow.',
+    profile: 'Sheltered river lagoon (Touw River mouth). Wind is the primary sea state here — there is no ocean swell, but do not interpret this as calm. At 40+ km/h the lagoon surface is rough with steep wind chop. Calm flat water when the mouth is closed. When open to the sea, tidal current runs. The mouth opens and closes seasonally — check local conditions before assuming tidal flow. Note: satellite water temperature substantially overstates actual lagoon temperature, particularly in winter.',
   },
   {
     id: 'goukamma-river',
@@ -69,7 +69,7 @@ export const SPOTS = [
     lat: -34.0833, lon: 22.9333,
     hasMarine: false, isTidal: true, tidalType: 'intermittent',
     exposure: 'sheltered',
-    profile: 'River mouth near Buffalo Bay. Sheltered calm water when closed. When the mouth opens to the sea, tidal current flows. The mouth opens and closes depending on rainfall and sea conditions — no tidal current when closed.',
+    profile: 'River mouth near Buffalo Bay. Wind is the primary sea state here — there is no ocean swell, but do not interpret this as calm. At 40+ km/h the water surface is rough with steep wind chop. Sheltered calm water when closed. When the mouth opens to the sea, tidal current flows. The mouth opens and closes depending on rainfall and sea conditions. Note: satellite water temperature substantially overstates actual temperature, particularly in winter.',
   },
   {
     id: 'mossel-bay',
@@ -109,7 +109,7 @@ export const SPOTS = [
     lat: -33.9833, lon: 23.5500,
     hasMarine: false, isTidal: true, tidalType: 'intermittent',
     exposure: 'sheltered',
-    profile: 'The Groot River lagoon within the Tsitsikamma is where open water swimming happens here — sheltered, calm, and pristine. The mouth opens and closes seasonally; when open, tidal current runs. The ocean beach is exposed and not an OW swim venue. Remote and uncrowded.',
+    profile: 'The Groot River lagoon within the Tsitsikamma is where open water swimming happens here — sheltered, calm, and pristine. Wind is the primary sea state — there is no ocean swell, but do not interpret this as calm at higher wind speeds. At 40+ km/h the lagoon surface will be rough. The mouth opens and closes seasonally; when open, tidal current runs. The ocean beach is exposed and not an OW swim venue. Remote and uncrowded. Note: satellite water temperature overstates actual lagoon temperature, particularly in winter.',
   },
   {
     id: 'keurbooms-river',
@@ -119,7 +119,7 @@ export const SPOTS = [
     lat: -34.0050, lon: 23.4200,
     hasMarine: false, isTidal: true, tidalType: 'permanent',
     exposure: 'sheltered',
-    profile: 'Sheltered tidal estuary permanently connected to the sea — the Keurbooms and Bitou rivers meet before the mouth. This is where open water swimmers in the Plett area swim. No swell penetrates. Conditions driven by local wind and tidal state. The swim near Potjies offers calm flat water on most days. In S and SE winds above 35-40 km/h the fetch across the estuary creates significant chop — conditions deteriorate quickly and the spot loses its sheltered character. Tidal current runs throughout — strongest mid-tide, slack near the turns. Spring tides produce stronger flow. Note: satellite water temperature overstates actual estuary temperature, particularly in winter.',
+    profile: 'Sheltered tidal estuary permanently connected to the sea — the Keurbooms and Bitou rivers meet before the mouth. This is where open water swimmers in the Plett area swim. Wind is the primary sea state here — there is no ocean swell, but do not interpret this as calm. At 40+ km/h the estuary surface is rough with steep wind chop; at 55+ km/h conditions are genuinely difficult. In S and SE winds above 35-40 km/h the fetch across the estuary creates significant chop — conditions deteriorate quickly and the spot loses its sheltered character. Tidal current runs throughout — strongest mid-tide, slack near the turns. Spring tides produce stronger flow. Note: satellite water temperature substantially overstates actual estuary temperature, particularly in winter — actual water temperature can be 5-6°C colder than displayed. Always verify locally.',
   },
 
   // ── EASTERN CAPE ──────────────────────────────────────────────────────────
@@ -151,7 +151,7 @@ export const SPOTS = [
     lat: -33.6833, lon: 26.6667,
     hasMarine: false, isTidal: true, tidalType: 'intermittent',
     exposure: 'sheltered',
-    profile: 'The Bushmans and Kariega rivers provide sheltered tidal estuary swimming — this is where OW swimming in the Kenton area happens, not the open coast. Warm water. Calm flat water away from the main tidal flow. Tidal current runs through the channels — check state before swimming near the mouth. River water quality can be affected after heavy rain upstream.',
+    profile: 'The Bushmans and Kariega rivers provide sheltered tidal estuary swimming — this is where OW swimming in the Kenton area happens, not the open coast. Wind is the primary sea state — there is no ocean swell, but do not interpret this as calm at higher wind speeds. At 40+ km/h the estuary surface will be rough. Tidal current runs through the channels — check state before swimming near the mouth. River water quality can be affected after heavy rain upstream. Note: satellite water temperature overstates actual estuary temperature, particularly in winter.',
   },
   {
     id: 'port-alfred',
