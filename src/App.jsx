@@ -333,11 +333,11 @@ ${tidalLabel ? `- Tidal: ${tidalLabel}` : ''}
 ${tempLabel ? `- ${tempLabel}, ${airLabel}` : ''}
 ${weather.rainProb != null && weather.rainProb > 20 ? `- Rain: ${weather.rainProb}% probability` : ''}${postStormNote}
 
-Write 2 short paragraphs for an experienced open water swimmer.
+Write 2 short paragraphs for an open water swimmer.
 Paragraph 1: what the conditions feel like right now. Use the pre-translated descriptions above — do not invent or change any figures or period labels.
 Paragraph 2: give a direct verdict. If conditions are clearly unsuitable, say so plainly — do not find a silver lining that isn't there. If there is a genuine window, identify it. If it is closing, say so.
 Then one short caveat sentence. Human tone, not legal.
-No markdown. No headers. No bullets. Never say safe or unsafe. Under 120 words total.`;
+No markdown. No headers. No bullets. Never say safe or unsafe. Never reference the reader's experience level or make assumptions about their capability. Under 120 words total.`;
 
   const res = await fetch('https://glassy-lake.vercel.app/api/read', {
     method: 'POST',
