@@ -65,22 +65,50 @@ function buildForecastBlocks(timeseries, marineData, precipData, bestIdx, mIdx) 
   return blocks;
 }
 
-// Count hours in the past 24h with rain probability >= 70%.
-// Uses Open-Meteo precipData which includes past_hours=48.
-function computeSustainedRain(precipData, currentPIdx) {
-  if (!precipData?.hourly?.precipitation_probability) return { heavyHours24: 0, heavyHours48: 0 };
-  const probs = precipData.hourly.precipitation_probability;
-  let heavyHours24 = 0, heavyHours48 = 0;
-  for (let i = 1; i <= 48; i++) {
-    const j = currentPIdx - i;
+// ── Recent rain history ───────────────────────────────────────────────────
+// Sums MODELLED hourly rainfall (mm) from Open-Meteo for the past 24h / 72h /
+// 7 days / 14 days. These are model estimates, not gauge readings, and a
+// gridded model can under-read local extremes. Thresholds are STARTING POINTS
+// taken from the May 2026 Knysna flood and have not been validated: tune them
+// against days you know (e.g. 13 May 2026 vs a swimmable wet day).
+export const RAIN_THRESHOLDS = {
+  note:  { mm24: 15, mm72: 30 },
+  amber: { mm24: 35, mm72: 70,  mm7d: 100, mm14d: 120 },
+  red:   { mm24: 80, mm72: 150, mm7d: 200, mm14d: 250 },
+};
+
+function sumPast(arr, idx, hours) {
+  let s = 0;
+  for (let i = 1; i <= hours; i++) {
+    const j = idx - i;
     if (j < 0) break;
-    const prob = probs[j];
-    if (prob != null && prob >= 70) {
-      if (i <= 24) heavyHours24++;
-      heavyHours48++;
-    }
+    const v = arr[j];
+    if (v != null) s += v;
   }
-  return { heavyHours24, heavyHours48 };
+  return s;
+}
+
+export function rainLevel(r) {
+  if (!r) return 'none';
+  const t = RAIN_THRESHOLDS;
+  if (r.mm24 >= t.red.mm24 || r.mm72 >= t.red.mm72 || r.mm7d >= t.red.mm7d || r.mm14d >= t.red.mm14d) return 'red';
+  if (r.mm24 >= t.amber.mm24 || r.mm72 >= t.amber.mm72 || r.mm7d >= t.amber.mm7d || r.mm14d >= t.amber.mm14d) return 'amber';
+  if (r.mm24 >= t.note.mm24 || r.mm72 >= t.note.mm72) return 'note';
+  return 'none';
+}
+
+export function computeRainHistory(precipData, currentPIdx) {
+  const mm = precipData?.hourly?.precipitation;
+  if (!Array.isArray(mm)) return null; // no data: show nothing rather than guess
+  const round1 = n => Math.round(n * 10) / 10;
+  const r = {
+    mm24:  round1(sumPast(mm, currentPIdx, 24)),
+    mm72:  round1(sumPast(mm, currentPIdx, 72)),
+    mm7d:  round1(sumPast(mm, currentPIdx, 24 * 7)),
+    mm14d: round1(sumPast(mm, currentPIdx, 24 * 14)),
+  };
+  r.level = rainLevel(r);
+  return r;
 }
 
 export async function fetchConditions(lat, lon, hasMarine) {
@@ -161,9 +189,9 @@ export async function fetchConditions(lat, lon, hasMarine) {
     }
   }
 
-  // Compute sustained rain over past 24/48 hours
+  // Recent rainfall history (mm) over 24h / 72h / 7d / 14d
   const pIdxForHistory = precipData?.hourly?.time ? findCurrentHourIdx(precipData.hourly.time) : 0;
-  const sustainedRain = computeSustainedRain(precipData, pIdxForHistory);
+  const sustainedRain = computeRainHistory(precipData, pIdxForHistory);
 
   const forecast = buildForecastBlocks(timeseries, marineData, precipData, bestIdx, mIdx);
   return { weather, marine, waterTemp, trajectory, forecast, sustainedRain };

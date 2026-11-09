@@ -180,19 +180,26 @@ const RainWarning = ({ rainProb }) => {
 
 const PostStormWarning = ({ sustainedRain, spot }) => {
   if (!sustainedRain || spot?.hasMarine !== false) return null;
-  if (sustainedRain.heavyHours24 < 8) return null;
-  const extreme = sustainedRain.heavyHours24 >= 16;
-  const color = extreme ? RED : AMBER;
-  const bg = extreme ? '#2A1515' : '#2A1E10';
+  const level = sustainedRain.level;
+  if (!level || level === 'none') return null;
+  const color = level === 'red' ? RED : level === 'amber' ? AMBER : MUTED;
+  const bg = level === 'red' ? '#2A1515' : level === 'amber' ? '#2A1E10' : SURFACE;
+  const title = level === 'red' ? '⚠ Very heavy recent rain'
+    : level === 'amber' ? '⚠ Significant recent rain'
+    : 'Some recent rain';
+  const text = level === 'red'
+    ? 'River discharge, floating debris and poor water quality are likely, and this data cannot see them. Debris can linger for days after the rain stops. Look at the water and your entry point before deciding.'
+    : level === 'amber'
+    ? 'The river may be running high, with some debris or discoloured water. Check the water at your entry point.'
+    : 'Worth a glance at water clarity and any debris when you arrive.';
   return (
     <div style={{ background: bg, border: `1px solid ${color}55`, borderRadius: 7, padding: '8px 11px', marginBottom: '0.75rem', borderLeft: `3px solid ${color}` }}>
       <div style={{ fontSize: 9, letterSpacing: '0.14em', color, textTransform: 'uppercase', marginBottom: 3 }}>
-        {extreme ? '⚠ Post-Storm Conditions' : '⚠ Recent Heavy Rainfall'}
+        {title}
       </div>
-      <div style={{ fontSize: 13, color: SUBTEXT, lineHeight: 1.5 }}>
-        {extreme
-          ? `Heavy rain recorded for ${sustainedRain.heavyHours24}+ of the past 24 hours. River discharge, debris and poor water quality are likely — atmospheric data cannot detect these conditions. Verify on the ground before entering.`
-          : `Significant rainfall over the past 24 hours. Check for river discharge and water quality before entering this lagoon or estuary.`}
+      <div style={{ fontSize: 13, color: SUBTEXT, lineHeight: 1.5 }}>{text}</div>
+      <div style={{ fontSize: 11, color: MUTED, marginTop: 5, lineHeight: 1.5 }}>
+        {sustainedRain.mm24} mm in 24 h · {sustainedRain.mm72} mm in 72 h · {sustainedRain.mm7d} mm in 7 days · {sustainedRain.mm14d} mm in 14 days. Modelled estimates, not gauge readings.
       </div>
     </div>
   );
@@ -289,8 +296,8 @@ async function getRead(locationName, weather, marine, waterTemp, tidal, spot, su
     weather.windSpeed < 20 ? `moderate (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
     weather.windSpeed < 35 ? `fresh (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
     weather.windSpeed < 40 ? `strong (${f0(weather.windSpeed)} km/h from ${weather.windDirection})` :
-    weather.windSpeed < 60 ? `very strong (${f0(weather.windSpeed)} km/h from ${weather.windDirection}) — likely no-go for most swimmers` :
-    `extreme (${f0(weather.windSpeed)} km/h from ${weather.windDirection}) — conditions are not suitable`;
+    weather.windSpeed < 60 ? `very strong (${f0(weather.windSpeed)} km/h from ${weather.windDirection}) — a demanding swim, with rough open water` :
+    `extreme (${f0(weather.windSpeed)} km/h from ${weather.windDirection}) — very demanding; check the water in person`;
 
   let swellLabel = 'no ocean swell';
   if (marine) {
@@ -317,8 +324,9 @@ async function getRead(locationName, weather, marine, waterTemp, tidal, spot, su
   const timeLabel = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) +
     ' on ' + now.toLocaleDateString('en-GB', {weekday: 'long'});
 
-  const postStormNote = (sustainedRain?.heavyHours24 >= 8 && spot?.hasMarine === false)
-    ? `\nPost-storm context: High rain probability was recorded for approximately ${sustainedRain.heavyHours24} of the past 24 hours. For this lagoon or estuary, this likely means river discharge, floating debris, and poor water quality that atmospheric data cannot detect. This is a significant caution — even if current wind and tidal conditions look acceptable, post-storm ground conditions may make this spot unsuitable. Do not recommend going without explicitly acknowledging this risk.`
+  const rainLvl = sustainedRain?.level;
+  const postStormNote = (rainLvl && rainLvl !== 'none' && spot?.hasMarine === false)
+    ? `\nRecent rain (modelled estimate, not gauge data): ${sustainedRain.mm24} mm in the past 24 hours, ${sustainedRain.mm72} mm over 72 hours, ${sustainedRain.mm7d} mm over 7 days, ${sustainedRain.mm14d} mm over 14 days. Level: ${rainLvl}. In a lagoon or estuary, heavy recent rain can mean river discharge, floating debris and poor water quality that this data cannot see, and debris can linger for days after the rain stops. ${rainLvl === 'red' ? 'State this clearly as the main thing to check at the water.' : rainLvl === 'amber' ? 'Mention it in one sentence.' : 'Mention it only briefly, if at all.'} Describe what to check; do not tell the reader whether to swim.`
     : '';
 
   const prompt = `You are the conditions reader for Glassy, an open water swim app.
@@ -335,7 +343,7 @@ ${weather.rainProb != null && weather.rainProb > 20 ? `- Rain: ${weather.rainPro
 
 Write 2 short paragraphs for an open water swimmer.
 Paragraph 1: what the conditions feel like right now. Use the pre-translated descriptions above — do not invent or change any figures or period labels.
-Paragraph 2: give a direct verdict. If conditions are clearly unsuitable, say so plainly — do not find a silver lining that isn't there. If there is a genuine window, identify it. If it is closing, say so.
+Paragraph 2: describe how demanding the swim is likely to be (for example slower going, a harder return leg, chop on exposed stretches) and where the easiest window is, or whether it is closing. Describe; do not instruct. Never tell the reader to swim, skip, avoid or not go, and never give a verdict on whether they should enter. If a hazard this data cannot see applies, say what to check at the water. Spot profile lines may contain local advice: pass it on as something to be aware of, in descriptive wording, not as an order.
 Then one short caveat sentence. Human tone, not legal.
 No markdown. No headers. No bullets. Never say safe or unsafe. Never reference the reader's experience level or make assumptions about their capability. Under 120 words total.`;
 
@@ -372,7 +380,7 @@ ${spot?.profile ? `Spot profile: ${spot.profile}` : ''}
 48-hour forecast (pre-computed — use these figures exactly, do not invent others):
 ${lines}${turnText}
 
-Write one short paragraph for an experienced open water swimmer answering: when is the best window in the next 48 hours? Name the window (e.g. "Thursday morning", "tomorrow before noon"). If conditions are poor throughout, say so plainly.
+Write one short paragraph for an experienced open water swimmer answering: when is the best window in the next 48 hours? Name the window (e.g. "Thursday morning", "tomorrow before noon"). If conditions are demanding throughout, say so plainly and name the least demanding window. Describe; do not instruct: never tell the reader whether to swim.
 No markdown. No headers. Never say safe or unsafe. Under 70 words.`;
 
   const res = await fetch('https://glassy-lake.vercel.app/api/read', {
